@@ -22,8 +22,10 @@ begin
    dbms_output.put_line('v_my_rec2.field1 = '||v_my_rec2.field1);
    dbms_output.put_line('v_my_rec3.field1 = '||v_my_rec3.field1);
    
-   v_my_rec1.field1 := null;
-   if v_my_rec1.field1 is null then
+   v_my_rec1 := null;
+   if v_my_rec1.field1 is null 
+      and v_my_rec1.field2 is null 
+      and v_my_rec1.field3 is null then
      dbms_output.put_line('It’s null');
    else 
      dbms_output.put_line('It’s not null');

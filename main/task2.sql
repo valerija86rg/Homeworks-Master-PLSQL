@@ -13,6 +13,21 @@ Declare
                                                                     ,t_payment_detail(3,'тест')
                                                                     ,t_payment_detail(4,'Нет'));
 begin
+   if v_payment_detail is not empty then 
+     for i in v_payment_detail.first..v_payment_detail.last LOOP
+	   if v_payment_detail(i).field_id is null then
+	     dbms_output.put_line('ID поля не может быть пустым');
+	   end if;
+	   
+	   if v_payment_detail(i).field_value is null then
+	     dbms_output.put_line('Значение в поле не может быть пустым');
+	   end if;
+	   dbms_output.put_line('Field_id: '||v_payment_detail(i).field_id||'  field_value: '||v_payment_detail(i).field_value);
+	 end loop;
+   else
+     dbms_output.put_line('Коллекция не содержит данных');
+   end if;
+
    dbms_output.put_line(v_message||'. Статус: '||c_status_create);
    dbms_output.put_line(to_char(v_current_dtime, 'yyyy/mm/dd hh24:mi:ss'));
    dbms_output.put_line('ИД Платежа: '||v_payment_id);
@@ -29,15 +44,15 @@ Declare
    v_message_error_id_null     varchar2(100 char) := 'ID объекта не может быть пустым';
    v_message_error_reason_null varchar2(100 char) := 'Причина не может быть пустой';
 begin
-   dbms_output.put_line(v_message||'. Статус: '||c_status_error||'. Причина: '||v_reason);
-   dbms_output.put_line(to_char(v_current_dtime, 'dd-mm-yyyy hh24:mi:ss.ff3'));
-   dbms_output.put_line('ИД Платежа: '||v_payment_id);
    if v_payment_id is null then
      dbms_output.put_line(v_message_error_id_null);
    end if;
    if v_reason is null then
      dbms_output.put_line(v_message_error_reason_null);
    end if;
+   dbms_output.put_line(v_message||'. Статус: '||c_status_error||'. Причина: '||v_reason);
+   dbms_output.put_line(to_char(v_current_dtime, 'dd-mm-yyyy hh24:mi:ss.ff3'));
+   dbms_output.put_line('ИД Платежа: '||v_payment_id);
 end;
 /
 
@@ -51,15 +66,16 @@ Declare
    v_message_error_id_null     varchar2(100 char) := 'ID объекта не может быть пустым';
    v_message_error_reason_null varchar2(100 char) := 'Причина не может быть пустой';
 begin
-   dbms_output.put_line(v_message||'. Статус: '||c_status_cancel||'. Причина: '||v_reason);
-   dbms_output.put_line(to_char(v_current_dtime, 'day month year  hh24:mi:ss.ff1'));
-   dbms_output.put_line('ИД Платежа: '||v_payment_id);
    if v_payment_id is null then
      dbms_output.put_line(v_message_error_id_null);
    end if;
    if v_reason is null then
      dbms_output.put_line(v_message_error_reason_null);
    end if;
+   dbms_output.put_line(v_message||'. Статус: '||c_status_cancel||'. Причина: '||v_reason);
+   dbms_output.put_line(to_char(v_current_dtime, 'day month year  hh24:mi:ss.ff1'));
+   dbms_output.put_line('ИД Платежа: '||v_payment_id);
+
 end;
 /
 
@@ -71,12 +87,12 @@ Declare
    v_payment_id            payment.payment_id%type := 1;
    v_message_error_id_null varchar2(100 char) := 'ID объекта не может быть пустым';
 begin
-   dbms_output.put_line(v_message||'. Статус: '||c_status_success);
-   dbms_output.put_line(to_char(v_current_dtime, 'dd-mon-rr hh24:mi:ssss'));
-   dbms_output.put_line('ИД Платежа: '||v_payment_id);
    if v_payment_id is null then
      dbms_output.put_line(v_message_error_id_null);
    end if;
+   dbms_output.put_line(v_message||'. Статус: '||c_status_success);
+   dbms_output.put_line(to_char(v_current_dtime, 'dd-mon-rr hh24:mi:ssss'));
+   dbms_output.put_line('ИД Платежа: '||v_payment_id);
 end;
 /
 
@@ -89,12 +105,28 @@ Declare
    v_payment_detail        t_payment_detail_array := t_payment_detail_array(t_payment_detail(3,'тест2')
                                                                            ,t_payment_detail(4,'Да'));
 begin
-   dbms_output.put_line(v_message);
-   dbms_output.put_line(to_char(v_current_dtime, 'fxfmdd-month-yy hh12:mi:ss'));
-   dbms_output.put_line('ИД Платежа: '||v_payment_id);
    if v_payment_id is null then
      dbms_output.put_line(v_message_error_id_null);
    end if;
+   if v_payment_detail is not empty then 
+     for i in v_payment_detail.first..v_payment_detail.last LOOP
+	   if v_payment_detail(i).field_id is null then
+	     dbms_output.put_line('ID поля не может быть пустым');
+	   end if;
+	   
+	   if v_payment_detail(i).field_value is null then
+	     dbms_output.put_line('Значение в поле не может быть пустым');
+	   end if;
+	   dbms_output.put_line('Field_id: '||v_payment_detail(i).field_id||'  field_value: '||v_payment_detail(i).field_value);
+	 end loop;
+   else
+     dbms_output.put_line('Коллекция не содержит данных');
+   end if;
+
+   dbms_output.put_line(v_message);
+   dbms_output.put_line(to_char(v_current_dtime, 'fxfmdd-month-yy hh12:mi:ss'));
+   dbms_output.put_line('ИД Платежа: '||v_payment_id);
+
 end;
 /
 
@@ -106,11 +138,15 @@ Declare
    v_message_error_id_null varchar2(100 char) := 'ID объекта не может быть пустым';
    v_delete_field_ids      t_number_array := t_number_array(2,3);
 begin
-   dbms_output.put_line(v_message);
-   dbms_output.put_line(to_char(v_current_dtime, 'fxdd/mon/yyyy hh24:mi:sssss.ff4'));
-   dbms_output.put_line('ИД Платежа: '||v_payment_id);
    if v_payment_id is null then
      dbms_output.put_line(v_message_error_id_null);
    end if;
+   if v_delete_field_ids is empty then 
+     dbms_output.put_line('Коллекция не содержит данных');
+   end if;
+   dbms_output.put_line(v_message);
+   dbms_output.put_line(to_char(v_current_dtime, 'fxdd/mon/yyyy hh24:mi:sssss.ff4'));
+   dbms_output.put_line('ИД Платежа: '||v_payment_id);
+   dbms_output.put_line('Количество удаляемых полей: '||v_delete_field_ids.count);
 end;
 /

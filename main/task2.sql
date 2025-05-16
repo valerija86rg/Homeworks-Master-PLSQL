@@ -6,7 +6,7 @@
 Declare
    v_message        varchar2(200 char) := 'Платеж создан';
    c_status_create  constant payment.status%type := 0;
-   v_current_dtime  date := sysdate;
+   v_current_dtime  timestamp := systimestamp;
    v_payment_id     payment.payment_id%type := 2;
    v_payment_detail t_payment_detail_array := t_payment_detail_array(t_payment_detail(1,'Приложение')
                                                                     ,t_payment_detail(2,'192.0.0.1')
@@ -122,7 +122,7 @@ end;
 Declare
    v_message               varchar2(200 char) := 'Успешное завершение платежа';
    c_status_success        constant payment.status%type := 1;
-   v_current_dtime         date := sysdate;
+   v_current_dtime         timestamp := systimestamp;
    v_payment_id            payment.payment_id%type := 2;
    v_message_error_id_null varchar2(100 char) := 'ID объекта не может быть пустым';
    c_status_create         constant payment.status%type := 0;
@@ -146,7 +146,7 @@ end;
 -- Добавление или обновление данных по платежу
 Declare
    v_message               varchar2(200 char) := 'Данные платежа добавлены или обновлены по списку id_поля/значение';
-   v_current_dtime         date := sysdate;
+   v_current_dtime         timestamp := systimestamp;
    v_payment_id            payment.payment_id%type := 2;
    v_message_error_id_null varchar2(100 char) := 'ID объекта не может быть пустым';
    v_payment_detail        t_payment_detail_array := t_payment_detail_array(t_payment_detail(3,'тест2')

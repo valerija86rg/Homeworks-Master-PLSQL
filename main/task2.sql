@@ -7,7 +7,7 @@ create or replace function create_payment(p_summa           payment.summa%type,
                                           p_currency_id     currency.currency_id%type,
                                           p_from_client_id  client.client_id%type, 
                                           p_to_client_id    client.client_id%type, 
-                                          p_current_dtime   timestamp := systimestamp,
+                                          p_create_dtime    timestamp := systimestamp,
                                           p_payment_detail  t_payment_detail_array) return payment.payment_id%type
 is 
    c_status_create  constant payment.status%type := 0;
@@ -59,8 +59,7 @@ end;
 
 -- Сброс платежа
 create or replace procedure fail_payment(p_payment_id    payment.payment_id%type,
-                                         p_reason        payment.status_change_reason%type,
-                                         p_current_dtime timestamp := systimestamp)
+                                         p_reason        payment.status_change_reason%type)
 is
    c_status_create  constant payment.status%type := 0;
    c_status_error   constant payment.status%type := 2;
@@ -89,8 +88,7 @@ end;
 
 -- Отмена платежа
 create or replace procedure cancel_payment (p_payment_id    payment.payment_id%type,
-                                            p_reason        payment.status_change_reason%type,
-                                            p_current_dtime timestamp := systimestamp)
+                                            p_reason        payment.status_change_reason%type)
 is
    c_status_create  constant payment.status%type := 0;
    c_status_cancel  constant payment.status%type := 3;
@@ -118,8 +116,7 @@ end;
 /
 
 -- Завершение платежа
-create or replace procedure successful_finish_payment(p_payment_id      payment.payment_id%type,
-                                                      p_current_dtime   timestamp := systimestamp)
+create or replace procedure successful_finish_payment(p_payment_id      payment.payment_id%type)
 is
    c_status_success        constant payment.status%type := 1;
    c_status_create         constant payment.status%type := 0;
@@ -144,8 +141,7 @@ end;
 
 -- Добавление или обновление данных по платежу
 create or replace procedure insert_or_update_payment_detail(p_payment_detail t_payment_detail_array,
-                                                            p_payment_id     payment.payment_id%type,
-                                                            p_current_dtime  timestamp := systimestamp)
+                                                            p_payment_id     payment.payment_id%type)
 is
    v_message_error_id_null varchar2(100 char) := 'ID объекта не может быть пустым';
    v_message               varchar2(200 char) := 'Данные платежа добавлены или обновлены по списку id_поля/значение';                                                         
@@ -189,7 +185,6 @@ end;
 
 -- Удаление деталей платежа
 create or replace procedure delete_payment_detail(p_delete_field_ids t_number_array,
-                                                  p_current_dtime    timestamp := systimestamp,
                                                   p_payment_id       payment.payment_id%type := 2)
 is
    v_message               varchar2(200 char) := 'Детали платежа удалены по списку id_полей';

@@ -1,14 +1,14 @@
 
 create or replace package body payment_detail_api_pack is 
 /*
-Автор: Кайгородова В.А. 
-Описание пакета: API для сущности “Детали платежа”
+РђРІС‚РѕСЂ: РљР°Р№РіРѕСЂРѕРґРѕРІР° Р’.Рђ. 
+РћРїРёСЃР°РЅРёРµ РїР°РєРµС‚Р°: API РґР»СЏ СЃСѓС‰РЅРѕСЃС‚Рё вЂњР”РµС‚Р°Р»Рё РїР»Р°С‚РµР¶Р°вЂќ
 */
 
   /*
-  *  Добавление или обновление данных по платежу
-  *  @param p_payment_detail     детали платежа
-  *  @param p_payment_id         идетификатор платежа
+  *  Р”РѕР±Р°РІР»РµРЅРёРµ РёР»Рё РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С… РїРѕ РїР»Р°С‚РµР¶Сѓ
+  *  @param p_payment_detail     РґРµС‚Р°Р»Рё РїР»Р°С‚РµР¶Р°
+  *  @param p_payment_id         РёРґРµС‚РёС„РёРєР°С‚РѕСЂ РїР»Р°С‚РµР¶Р°
   */
   procedure insert_or_update_payment_detail(p_payment_detail t_payment_detail_array,
                                             p_payment_id     payment.payment_id%type)
@@ -20,22 +20,22 @@ create or replace package body payment_detail_api_pack is
      if p_payment_detail is not empty then 
        for i in p_payment_detail.first..p_payment_detail.last LOOP
        if p_payment_detail(i).field_id is null then
-         dbms_output.put_line('ID поля не может быть пустым');
+         dbms_output.put_line('ID РїРѕР»СЏ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј');
        end if;
        
        if p_payment_detail(i).field_value is null then
-         dbms_output.put_line('Значение в поле не может быть пустым');
+         dbms_output.put_line('Р—РЅР°С‡РµРЅРёРµ РІ РїРѕР»Рµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј');
        end if;
        dbms_output.put_line('Field_id: '||p_payment_detail(i).field_id||'  field_value: '||p_payment_detail(i).field_value);
      end loop;
      else
-       dbms_output.put_line('Коллекция не содержит данных');
+       dbms_output.put_line('РљРѕР»Р»РµРєС†РёСЏ РЅРµ СЃРѕРґРµСЂР¶РёС‚ РґР°РЅРЅС‹С…');
      end if;
 
      dbms_output.put_line(c_info_msg_update_payment_detail);
-     dbms_output.put_line('ИД Платежа: '||p_payment_id);
+     dbms_output.put_line('РР” РџР»Р°С‚РµР¶Р°: '||p_payment_id);
      
-     --Вставка обновление данных по платежу
+     --Р’СЃС‚Р°РІРєР° РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С… РїРѕ РїР»Р°С‚РµР¶Сѓ
      merge into payment_detail pt
      using (select p_payment_id payment_id
                   ,value(t).field_id field_id
@@ -50,9 +50,9 @@ create or replace package body payment_detail_api_pack is
   end insert_or_update_payment_detail;
 
   /*
-  *  Удаление деталей платежа
-  *  @param p_delete_field_ids   идентификаторы деталей платежа
-  *  @param p_payment_id         идетификатор платежа
+  *  РЈРґР°Р»РµРЅРёРµ РґРµС‚Р°Р»РµР№ РїР»Р°С‚РµР¶Р°
+  *  @param p_delete_field_ids   РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ РґРµС‚Р°Р»РµР№ РїР»Р°С‚РµР¶Р°
+  *  @param p_payment_id         РёРґРµС‚РёС„РёРєР°С‚РѕСЂ РїР»Р°С‚РµР¶Р°
   */
   procedure delete_payment_detail(p_delete_field_ids t_number_array,
                                   p_payment_id       payment.payment_id%type)
@@ -62,11 +62,11 @@ create or replace package body payment_detail_api_pack is
        dbms_output.put_line(c_err_msg_empty_object_id);
      end if;
      if p_delete_field_ids is empty then 
-       dbms_output.put_line('Коллекция не содержит данных');
+       dbms_output.put_line('РљРѕР»Р»РµРєС†РёСЏ РЅРµ СЃРѕРґРµСЂР¶РёС‚ РґР°РЅРЅС‹С…');
      end if;
      dbms_output.put_line(c_info_msg_delete_payment_detail);
-     dbms_output.put_line('ИД Платежа: '||p_payment_id);
-     dbms_output.put_line('Количество удаляемых полей: '||p_delete_field_ids.count);
+     dbms_output.put_line('РР” РџР»Р°С‚РµР¶Р°: '||p_payment_id);
+     dbms_output.put_line('РљРѕР»РёС‡РµСЃС‚РІРѕ СѓРґР°Р»СЏРµРјС‹С… РїРѕР»РµР№: '||p_delete_field_ids.count);
      
      delete payment_detail pd
       where pd.payment_id = p_payment_id

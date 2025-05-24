@@ -1,25 +1,25 @@
 create or replace package payment_detail_api_pack  is 
 /*
-Автор: Кайгородова В.А. 
-Описание пакета: API для сущности “Детали платежа”
+РђРІС‚РѕСЂ: РљР°Р№РіРѕСЂРѕРґРѕРІР° Р’.Рђ. 
+РћРїРёСЃР°РЅРёРµ РїР°РєРµС‚Р°: API РґР»СЏ СЃСѓС‰РЅРѕСЃС‚Рё вЂњР”РµС‚Р°Р»Рё РїР»Р°С‚РµР¶Р°вЂќ
 */
-  c_err_msg_empty_object_id   constant varchar2(100 char) := 'ID объекта не может быть пустым';
+  c_err_msg_empty_object_id   constant varchar2(100 char) := 'ID РѕР±СЉРµРєС‚Р° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј';
   
-  c_info_msg_delete_payment_detail       constant varchar2(100 char) := 'Детали платежа удалены по списку id_полей';
-  c_info_msg_update_payment_detail       constant varchar2(200 char) := 'Данные платежа добавлены или обновлены по списку id';
+  c_info_msg_delete_payment_detail       constant varchar2(100 char) := 'Р”РµС‚Р°Р»Рё РїР»Р°С‚РµР¶Р° СѓРґР°Р»РµРЅС‹ РїРѕ СЃРїРёСЃРєСѓ id_РїРѕР»РµР№';
+  c_info_msg_update_payment_detail       constant varchar2(200 char) := 'Р”Р°РЅРЅС‹Рµ РїР»Р°С‚РµР¶Р° РґРѕР±Р°РІР»РµРЅС‹ РёР»Рё РѕР±РЅРѕРІР»РµРЅС‹ РїРѕ СЃРїРёСЃРєСѓ id';
 
   /*
-  *  Добавление или обновление данных по платежу
-  *  @param p_payment_detail     детали платежа
-  *  @param p_payment_id         идетификатор платежа
+  *  Р”РѕР±Р°РІР»РµРЅРёРµ РёР»Рё РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С… РїРѕ РїР»Р°С‚РµР¶Сѓ
+  *  @param p_payment_detail     РґРµС‚Р°Р»Рё РїР»Р°С‚РµР¶Р°
+  *  @param p_payment_id         РёРґРµС‚РёС„РёРєР°С‚РѕСЂ РїР»Р°С‚РµР¶Р°
   */
   procedure insert_or_update_payment_detail(p_payment_detail t_payment_detail_array,
                                             p_payment_id     payment.payment_id%type);
 
   /*
-  *  Удаление деталей платежа
-  *  @param p_delete_field_ids   идентификаторы деталей платежа
-  *  @param p_payment_id         идетификатор платежа
+  *  РЈРґР°Р»РµРЅРёРµ РґРµС‚Р°Р»РµР№ РїР»Р°С‚РµР¶Р°
+  *  @param p_delete_field_ids   РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ РґРµС‚Р°Р»РµР№ РїР»Р°С‚РµР¶Р°
+  *  @param p_payment_id         РёРґРµС‚РёС„РёРєР°С‚РѕСЂ РїР»Р°С‚РµР¶Р°
   */
   procedure delete_payment_detail(p_delete_field_ids t_number_array,
                                   p_payment_id       payment.payment_id%type);

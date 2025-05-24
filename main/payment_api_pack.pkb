@@ -1,18 +1,18 @@
 create or replace package body payment_api_pack is
 /*
-Автор: Кайгородова В.А. 
-Описание пакета: API для сущности “Платеж”
+РђРІС‚РѕСЂ: РљР°Р№РіРѕСЂРѕРґРѕРІР° Р’.Рђ. 
+РћРїРёСЃР°РЅРёРµ РїР°РєРµС‚Р°: API РґР»СЏ СЃСѓС‰РЅРѕСЃС‚Рё вЂњРџР»Р°С‚РµР¶вЂќ
 */
 
   /*
-  *  создания платежа
-  *  @param p_summa             - сумма платежа
-  *  @param p_currency_id       - идентификатор валюты
-  *  @param p_from_client_id    - идентификатор клиента с которого переводим
-  *  @param p_to_client_id      - идентификатор клиента кому переводим
-  *  @param p_create_dtime      - дата создания платежа
-  *  @param p_payment_detail    - детали платежа
-  *  @return - идетификатор платежа
+  *  СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°
+  *  @param p_summa             - СЃСѓРјРјР° РїР»Р°С‚РµР¶Р°
+  *  @param p_currency_id       - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РІР°Р»СЋС‚С‹
+  *  @param p_from_client_id    - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєР»РёРµРЅС‚Р° СЃ РєРѕС‚РѕСЂРѕРіРѕ РїРµСЂРµРІРѕРґРёРј
+  *  @param p_to_client_id      - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєР»РёРµРЅС‚Р° РєРѕРјСѓ РїРµСЂРµРІРѕРґРёРј
+  *  @param p_create_dtime      - РґР°С‚Р° СЃРѕР·РґР°РЅРёСЏ РїР»Р°С‚РµР¶Р°
+  *  @param p_payment_detail    - РґРµС‚Р°Р»Рё РїР»Р°С‚РµР¶Р°
+  *  @return - РёРґРµС‚РёС„РёРєР°С‚РѕСЂ РїР»Р°С‚РµР¶Р°
   */
   function create_payment(p_summa           payment.summa%type, 
                           p_currency_id     currency.currency_id%type,
@@ -38,10 +38,10 @@ create or replace package body payment_api_pack is
        dbms_output.put_line(c_err_msg_empty_collection);
      end if;
 
-     dbms_output.put_line(c_info_msg_create_payment||'. Статус: '||c_status_create);
+     dbms_output.put_line(c_info_msg_create_payment||'. РЎС‚Р°С‚СѓСЃ: '||c_status_create);
      dbms_output.put_line(to_char(p_create_dtime, 'yyyymmdd hh24:mi:ss'));
      
-     --создание платежа
+     --СЃРѕР·РґР°РЅРёРµ РїР»Р°С‚РµР¶Р°
      insert into payment( payment_id,
                           create_dtime,
                           summa,
@@ -55,7 +55,7 @@ create or replace package body payment_api_pack is
      
      dbms_output.put_line('Payment_id of new payment: '||v_payment_id);
      
-     --Добавление данных по платежу
+     --Р”РѕР±Р°РІР»РµРЅРёРµ РґР°РЅРЅС‹С… РїРѕ РїР»Р°С‚РµР¶Сѓ
      insert into payment_detail(payment_id,
                                 field_id,
                                 field_value)
@@ -65,9 +65,9 @@ create or replace package body payment_api_pack is
   end create_payment;
 
   /*
-  *  Сброс платежа
-  *  @param p_payment_id   - идетификатор платежа
-  *  @param p_reason       - причина сброса
+  *  РЎР±СЂРѕСЃ РїР»Р°С‚РµР¶Р°
+  *  @param p_payment_id   - РёРґРµС‚РёС„РёРєР°С‚РѕСЂ РїР»Р°С‚РµР¶Р°
+  *  @param p_reason       - РїСЂРёС‡РёРЅР° СЃР±СЂРѕСЃР°
   */
   procedure fail_payment(p_payment_id    payment.payment_id%type,
                          p_reason        payment.status_change_reason%type)
@@ -79,10 +79,10 @@ create or replace package body payment_api_pack is
      if p_reason is null then
        dbms_output.put_line(c_err_msg_empty_reason);
      end if;
-     dbms_output.put_line(c_info_msg_fail_payment||'. Статус: '||c_status_error||'. Причина: '||p_reason);
-     dbms_output.put_line('ИД Платежа: '||p_payment_id);
+     dbms_output.put_line(c_info_msg_fail_payment||'. РЎС‚Р°С‚СѓСЃ: '||c_status_error||'. РџСЂРёС‡РёРЅР°: '||p_reason);
+     dbms_output.put_line('РР” РџР»Р°С‚РµР¶Р°: '||p_payment_id);
      
-     --Обновление статуса платежа
+     --РћР±РЅРѕРІР»РµРЅРёРµ СЃС‚Р°С‚СѓСЃР° РїР»Р°С‚РµР¶Р°
      update payment p 
         set p.status = c_status_error
            ,p.status_change_reason = p_reason
@@ -91,9 +91,9 @@ create or replace package body payment_api_pack is
   end fail_payment;
 
   /*
-  *  Отмена платежа
-  *  @param p_payment_id   - идетификатор платежа
-  *  @param p_reason       - причина отмены
+  *  РћС‚РјРµРЅР° РїР»Р°С‚РµР¶Р°
+  *  @param p_payment_id   - РёРґРµС‚РёС„РёРєР°С‚РѕСЂ РїР»Р°С‚РµР¶Р°
+  *  @param p_reason       - РїСЂРёС‡РёРЅР° РѕС‚РјРµРЅС‹
   */
   procedure cancel_payment (p_payment_id    payment.payment_id%type,
                             p_reason        payment.status_change_reason%type)
@@ -105,10 +105,10 @@ create or replace package body payment_api_pack is
      if p_reason is null then
        dbms_output.put_line(c_err_msg_empty_reason);
      end if;
-     dbms_output.put_line(c_info_msg_cancel_payment||'. Статус: '||c_status_cancel||'. Причина: '||p_reason);
-     dbms_output.put_line('ИД Платежа: '||p_payment_id);
+     dbms_output.put_line(c_info_msg_cancel_payment||'. РЎС‚Р°С‚СѓСЃ: '||c_status_cancel||'. РџСЂРёС‡РёРЅР°: '||p_reason);
+     dbms_output.put_line('РР” РџР»Р°С‚РµР¶Р°: '||p_payment_id);
      
-     --Обновление статуса платежа
+     --РћР±РЅРѕРІР»РµРЅРёРµ СЃС‚Р°С‚СѓСЃР° РїР»Р°С‚РµР¶Р°
      update payment p 
         set p.status = c_status_cancel
            ,p.status_change_reason = p_reason
@@ -117,8 +117,8 @@ create or replace package body payment_api_pack is
   end cancel_payment;
 
   /*
-  *  Завершение платежа
-  *  @param p_payment_id   - идетификатор платежа
+  *  Р—Р°РІРµСЂС€РµРЅРёРµ РїР»Р°С‚РµР¶Р°
+  *  @param p_payment_id   - РёРґРµС‚РёС„РёРєР°С‚РѕСЂ РїР»Р°С‚РµР¶Р°
   */
   procedure successful_finish_payment(p_payment_id      payment.payment_id%type)
   is
@@ -126,10 +126,10 @@ create or replace package body payment_api_pack is
      if p_payment_id is null then
        dbms_output.put_line(c_err_msg_empty_object_id);
      end if;
-     dbms_output.put_line(c_info_msg_successful_finish_payment||'. Статус: '||c_status_success);
-     dbms_output.put_line('ИД Платежа: '||p_payment_id);
+     dbms_output.put_line(c_info_msg_successful_finish_payment||'. РЎС‚Р°С‚СѓСЃ: '||c_status_success);
+     dbms_output.put_line('РР” РџР»Р°С‚РµР¶Р°: '||p_payment_id);
      
-     --Обновление статуса платежа
+     --РћР±РЅРѕРІР»РµРЅРёРµ СЃС‚Р°С‚СѓСЃР° РїР»Р°С‚РµР¶Р°
      update payment p 
         set p.status = c_status_success
            ,p.status_change_reason = null

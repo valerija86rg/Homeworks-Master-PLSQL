@@ -22,13 +22,6 @@ create or replace package payment_api_pack is
   c_info_msg_cancel_payment              constant varchar2(100 char) := 'Отмена платежа с указанием причины';
   c_info_msg_successful_finish_payment   constant varchar2(100 char) := 'Успешное завершение платежа';
   
-  --коды ошибок
-  c_error_code_invalid_input_parametr    constant number(10) := -20101;
-  
-  --объекты исключений
-  e_invalid_input_parametr exception;
-  pragma exception_init(e_invalid_input_parametr, -20101);
-  
   /*
   *  создания платежа
   *  @param p_summa             - сумма платежа
@@ -67,3 +60,4 @@ create or replace package payment_api_pack is
   */
   procedure successful_finish_payment(p_payment_id      payment.payment_id%type);
 end payment_api_pack;
+/

@@ -1,4 +1,3 @@
-
 create or replace package body payment_detail_api_pack is 
 /*
 Автор: Кайгородова В.А. 
@@ -15,21 +14,21 @@ create or replace package body payment_detail_api_pack is
   is                                                      
   begin
      if p_payment_id is null then
-       dbms_output.put_line(c_err_msg_empty_object_id);
+       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_object_id);
      end if;
      if p_payment_detail is not empty then 
        for i in p_payment_detail.first..p_payment_detail.last LOOP
        if p_payment_detail(i).field_id is null then
-         dbms_output.put_line('ID поля не может быть пустым');
+         raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_field_id);
        end if;
        
        if p_payment_detail(i).field_value is null then
-         dbms_output.put_line('Значение в поле не может быть пустым');
+         raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_field_value);
        end if;
        dbms_output.put_line('Field_id: '||p_payment_detail(i).field_id||'  field_value: '||p_payment_detail(i).field_value);
      end loop;
      else
-       dbms_output.put_line('Коллекция не содержит данных');
+       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_collection);
      end if;
 
      dbms_output.put_line(c_info_msg_update_payment_detail);
@@ -59,10 +58,10 @@ create or replace package body payment_detail_api_pack is
   is
   begin
      if p_payment_id is null then
-       dbms_output.put_line(c_err_msg_empty_object_id);
+       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_object_id);
      end if;
      if p_delete_field_ids is empty then 
-       dbms_output.put_line('Коллекция не содержит данных');
+       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_collection);
      end if;
      dbms_output.put_line(c_info_msg_delete_payment_detail);
      dbms_output.put_line('ИД Платежа: '||p_payment_id);
@@ -73,4 +72,3 @@ create or replace package body payment_detail_api_pack is
         and pd.field_id in (select value(t) from table(p_delete_field_ids) t);
   end delete_payment_detail;
 end payment_detail_api_pack;
-/

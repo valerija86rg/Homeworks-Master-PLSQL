@@ -16,6 +16,8 @@ create or replace package payment_api_pack is
   c_err_msg_empty_collection  constant varchar2(100 char) := 'Коллекция не содержит данных';
   c_err_msg_empty_object_id   constant varchar2(100 char) := 'ID объекта не может быть пустым';
   c_err_msg_empty_reason      constant varchar2(100 char) := 'Причина не может быть пустой';
+  c_err_msg_delete_forbidden  constant varchar2(100 char) := 'Удаление объекта запрещено';
+  c_err_msg_manual_changes    constant varchar2(100 char) := 'Изменения должны вноситься только через API';
   
   c_info_msg_create_payment              constant varchar2(100 char) := 'Платеж создан';
   c_info_msg_fail_payment                constant varchar2(200 char) := 'Сброс платежа в "ошибочный статус" с указанием причины';
@@ -24,10 +26,16 @@ create or replace package payment_api_pack is
   
   --коды ошибок
   c_error_code_invalid_input_parametr    constant number(10) := -20101;
+  c_error_code_delete_forbidden          constant number(10) := -20102;
+  c_error_code_manual_changes            constant number(10) := -20103;
   
   --объекты исключений
   e_invalid_input_parametr exception;
   pragma exception_init(e_invalid_input_parametr, -20101);
+  e_invalid_delete_forbidden exception;
+  pragma exception_init(e_invalid_delete_forbidden, -20102);
+  e_invalid_manual_changes exception;
+  pragma exception_init(e_invalid_manual_changes, -20103);
   
   /*
   *  создания платежа
@@ -66,4 +74,9 @@ create or replace package payment_api_pack is
   *  @param p_payment_id   - идетификатор платежа
   */
   procedure successful_finish_payment(p_payment_id      payment.payment_id%type);
+  
+  /*
+  *  Проверка вызываемая из триггера
+  */
+  procedure is_change_through_api;
 end payment_api_pack;

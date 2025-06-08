@@ -3,7 +3,22 @@ create or replace package body payment_detail_api_pack is
 Автор: Кайгородова В.А. 
 Описание пакета: API для сущности “Детали платежа”
 */
+  g_is_api boolean := false; --Признак выполняется ли изменения через API
+  
+  --разрешение менять данные
+  procedure allow_changes
+  is
+  begin
+    g_is_api := true;
+  end;
 
+  --запрет менять данные
+  procedure disallow_changes
+  is
+  begin
+    g_is_api := false;
+  end;
+  
   /*
   *  Добавление или обновление данных по платежу
   *  @param p_payment_detail     детали платежа
@@ -34,6 +49,8 @@ create or replace package body payment_detail_api_pack is
      dbms_output.put_line(c_info_msg_update_payment_detail);
      dbms_output.put_line('ИД Платежа: '||p_payment_id);
      
+     allow_changes();
+     
      --Вставка обновление данных по платежу
      merge into payment_detail pt
      using (select p_payment_id payment_id
@@ -46,6 +63,13 @@ create or replace package body payment_detail_api_pack is
     when not matched then 
       insert(payment_id, field_id, field_value)
       values(n.payment_id, n.field_id, n.field_value);
+      
+     disallow_changes();
+     
+    exception
+      when others then
+        disallow_changes();
+        raise;
   end insert_or_update_payment_detail;
 
   /*
@@ -67,8 +91,28 @@ create or replace package body payment_detail_api_pack is
      dbms_output.put_line('ИД Платежа: '||p_payment_id);
      dbms_output.put_line('Количество удаляемых полей: '||p_delete_field_ids.count);
      
+     allow_changes();
+     
      delete payment_detail pd
       where pd.payment_id = p_payment_id
         and pd.field_id in (select value(t) from table(p_delete_field_ids) t);
+        
+     disallow_changes();
+     
+     exception
+      when others then
+        disallow_changes();
+        raise;
   end delete_payment_detail;
+  
+  /*
+  *  Проверка вызываемая из триггера
+  */
+  procedure is_change_through_api
+  is
+  begin
+    if not g_is_api then 
+      raise_application_error(c_error_code_manual_changes, c_err_msg_manual_changes);
+    end if;    
+  end is_change_through_api;
 end payment_detail_api_pack;

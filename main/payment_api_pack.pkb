@@ -4,6 +4,23 @@ create or replace package body payment_api_pack is
 Описание пакета: API для сущности “Платеж”
 */
 
+
+  g_is_api boolean := false; --Признак выполняется ли изменения через API
+  
+  --разрешение менять данные
+  procedure allow_changes
+  is
+  begin
+    g_is_api := true;
+  end;
+
+  --запрет менять данные
+  procedure disallow_changes
+  is
+  begin
+    g_is_api := false;
+  end;
+
   /*
   *  создания платежа
   *  @param p_summa             - сумма платежа
@@ -40,7 +57,7 @@ create or replace package body payment_api_pack is
 
      dbms_output.put_line(c_info_msg_create_payment||'. Статус: '||c_status_create);
      dbms_output.put_line(to_char(p_create_dtime, 'yyyymmdd hh24:mi:ss'));
-     
+     allow_changes();
      --создание платежа
      insert into payment( payment_id,
                           create_dtime,
@@ -56,12 +73,14 @@ create or replace package body payment_api_pack is
      dbms_output.put_line('Payment_id of new payment: '||v_payment_id);
      
      --Добавление данных по платежу
-     insert into payment_detail(payment_id,
-                                field_id,
-                                field_value)
-     select v_payment_id, value(t).field_id, value(t).field_value from table(p_payment_detail) t;
-     
+     payment_detail_api_pack.insert_or_update_payment_detail(p_payment_detail => p_payment_detail,
+                                                             p_payment_id     => v_payment_id);
+     disallow_changes();
      return v_payment_id;
+  exception
+    when others then
+      disallow_changes();
+      raise;
   end create_payment;
 
   /*
@@ -82,12 +101,20 @@ create or replace package body payment_api_pack is
      dbms_output.put_line(c_info_msg_fail_payment||'. Статус: '||c_status_error||'. Причина: '||p_reason);
      dbms_output.put_line('ИД Платежа: '||p_payment_id);
      
+    allow_changes();
+     
      --Обновление статуса платежа
      update payment p 
         set p.status = c_status_error
            ,p.status_change_reason = p_reason
       where p.payment_id = p_payment_id
         and p.status = c_status_create;
+        
+    disallow_changes();
+  exception
+    when others then
+      disallow_changes();
+      raise;
   end fail_payment;
 
   /*
@@ -108,12 +135,20 @@ create or replace package body payment_api_pack is
      dbms_output.put_line(c_info_msg_cancel_payment||'. Статус: '||c_status_cancel||'. Причина: '||p_reason);
      dbms_output.put_line('ИД Платежа: '||p_payment_id);
      
+     allow_changes();
+     
      --Обновление статуса платежа
      update payment p 
         set p.status = c_status_cancel
            ,p.status_change_reason = p_reason
       where p.payment_id = p_payment_id
         and p.status = c_status_create;
+     disallow_changes();
+     
+    exception
+      when others then
+        disallow_changes();
+        raise;
   end cancel_payment;
 
   /*
@@ -129,11 +164,31 @@ create or replace package body payment_api_pack is
      dbms_output.put_line(c_info_msg_successful_finish_payment||'. Статус: '||c_status_success);
      dbms_output.put_line('ИД Платежа: '||p_payment_id);
      
+     allow_changes();
+     
      --Обновление статуса платежа
      update payment p 
         set p.status = c_status_success
            ,p.status_change_reason = null
       where p.payment_id = p_payment_id
         and p.status = c_status_create;
+     
+     disallow_changes();     
+        
+     exception
+      when others then
+        disallow_changes();
+        raise;
   end successful_finish_payment;
+  
+ /*
+  *  Проверка вызываемая из триггера
+  */
+  procedure is_change_through_api
+  is
+  begin
+    if not g_is_api then 
+      raise_application_error(c_error_code_manual_changes, c_err_msg_manual_changes);
+    end if;    
+  end is_change_through_api;
 end payment_api_pack;

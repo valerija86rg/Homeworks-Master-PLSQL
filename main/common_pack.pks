@@ -4,11 +4,6 @@ create or replace package common_pack  is
 Описание пакета: для общих объектов
 */
 
-    --статусы платежа
-  c_status_create         constant payment.status%type := 0;
-  c_status_success        constant payment.status%type := 1;
-  c_status_error          constant payment.status%type := 2;
-  c_status_cancel         constant payment.status%type := 3;
   
   --сообщения ошибок 
   c_err_msg_empty_field_id               constant varchar2(100 char) := 'ID поля не может быть пустым';

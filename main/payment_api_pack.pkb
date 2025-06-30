@@ -40,23 +40,7 @@ create or replace package body payment_api_pack is
   is 
      v_payment_id     payment.payment_id%type;
   begin
-     if p_payment_detail is not empty then 
-       for i in p_payment_detail.first..p_payment_detail.last LOOP
-       if p_payment_detail(i).field_id is null then
-         raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_field_id);
-       end if;
-       
-       if p_payment_detail(i).field_value is null then
-         raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_field_value);
-       end if;
-       dbms_output.put_line('Field_id: '||p_payment_detail(i).field_id||'  field_value: '||p_payment_detail(i).field_value);
-     end loop;
-     else
-       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_collection);
-     end if;
-
-     dbms_output.put_line(c_info_msg_create_payment||'. Статус: '||c_status_create);
-     dbms_output.put_line(to_char(p_create_dtime, 'yyyymmdd hh24:mi:ss'));
+     
      allow_changes();
      --создание платежа
      insert into payment( payment_id,
@@ -69,8 +53,6 @@ create or replace package body payment_api_pack is
                           status_change_reason)
      values (payment_seq.nextval, p_create_dtime, p_summa, p_currency_id, p_from_client_id, p_to_client_id, c_status_create, null)
      returning payment_id into v_payment_id;
-     
-     dbms_output.put_line('Payment_id of new payment: '||v_payment_id);
      
      --Добавление данных по платежу
      payment_detail_api_pack.insert_or_update_payment_detail(p_payment_detail => p_payment_detail,
@@ -93,13 +75,11 @@ create or replace package body payment_api_pack is
   is
   begin
      if p_payment_id is null then
-       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_object_id);
+       raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_object_id);
      end if;
      if p_reason is null then
-       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_reason);
+       raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_reason);
      end if;
-     dbms_output.put_line(c_info_msg_fail_payment||'. Статус: '||c_status_error||'. Причина: '||p_reason);
-     dbms_output.put_line('ИД Платежа: '||p_payment_id);
      
     allow_changes();
      
@@ -127,13 +107,11 @@ create or replace package body payment_api_pack is
   is
   begin
      if p_payment_id is null then
-       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_object_id);
+       raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_object_id);
      end if;
      if p_reason is null then
-       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_reason);
+       raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_reason);
      end if;
-     dbms_output.put_line(c_info_msg_cancel_payment||'. Статус: '||c_status_cancel||'. Причина: '||p_reason);
-     dbms_output.put_line('ИД Платежа: '||p_payment_id);
      
      allow_changes();
      
@@ -159,10 +137,8 @@ create or replace package body payment_api_pack is
   is
   begin
      if p_payment_id is null then
-       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_object_id);
+       raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_object_id);
      end if;
-     dbms_output.put_line(c_info_msg_successful_finish_payment||'. Статус: '||c_status_success);
-     dbms_output.put_line('ИД Платежа: '||p_payment_id);
      
      allow_changes();
      
@@ -187,8 +163,21 @@ create or replace package body payment_api_pack is
   procedure is_change_through_api
   is
   begin
-    if not g_is_api then 
-      raise_application_error(c_error_code_manual_changes, c_err_msg_manual_changes);
+    if not g_is_api and not common_pack.is_manual_changes_allowed() then 
+      raise_application_error(common_pack.c_error_code_manual_changes, common_pack.c_err_msg_manual_changes);
     end if;    
   end is_change_through_api;
+  
+  /*
+  *  Проверка на возможность удалять данные
+  */
+  procedure check_payment_delete_restriction
+  is
+  begin
+    if not common_pack.is_manual_changes_allowed() then 
+       raise_application_error(common_pack.c_error_code_delete_forbidden, 
+                               common_pack.c_err_msg_delete_forbidden);
+    end if;
+  end check_payment_delete_restriction;
 end payment_api_pack;
+/

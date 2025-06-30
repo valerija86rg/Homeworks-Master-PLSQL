@@ -3,8 +3,7 @@ create or replace package payment_api_pack is
 Автор: Кайгородова В.А. 
 Описание пакета: API для сущности “Платеж”
 */
-
-    --статусы платежа
+  --статусы платежа
   c_status_create         constant payment.status%type := 0;
   c_status_success        constant payment.status%type := 1;
   c_status_error          constant payment.status%type := 2;
@@ -58,5 +57,11 @@ create or replace package payment_api_pack is
   */
   procedure check_payment_delete_restriction;
   
+  
+  /*
+  *  Блокировка клиента для изменения
+  *  @param p_payment_id   - идетификатор платежа
+  */
+  procedure try_lock_payment(p_payment_id      payment.payment_id%type);
 end payment_api_pack;
 /

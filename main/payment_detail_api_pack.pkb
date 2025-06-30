@@ -45,6 +45,7 @@ create or replace package body payment_detail_api_pack is
        raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_collection);
      end if;
      
+     payment_api_pack.try_lock_payment(p_payment_id => p_payment_id); --блокируем платеж
      allow_changes();
      
      --Вставка обновление данных по платежу
@@ -83,6 +84,8 @@ create or replace package body payment_detail_api_pack is
      if p_delete_field_ids is empty then 
        raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_collection);
      end if;
+     
+     payment_api_pack.try_lock_payment(p_payment_id => p_payment_id); --блокируем платеж
      
      allow_changes();
      

@@ -80,8 +80,9 @@ create or replace package body payment_api_pack is
      if p_reason is null then
        raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_reason);
      end if;
-     
-    allow_changes();
+    
+     try_lock_payment(p_payment_id => p_payment_id);
+     allow_changes();
      
      --Обновление статуса платежа
      update payment p 
@@ -113,6 +114,7 @@ create or replace package body payment_api_pack is
        raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_reason);
      end if;
      
+     try_lock_payment(p_payment_id => p_payment_id);
      allow_changes();
      
      --Обновление статуса платежа
@@ -140,6 +142,7 @@ create or replace package body payment_api_pack is
        raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_object_id);
      end if;
      
+     try_lock_payment(p_payment_id => p_payment_id);
      allow_changes();
      
      --Обновление статуса платежа
@@ -179,5 +182,31 @@ create or replace package body payment_api_pack is
                                common_pack.c_err_msg_delete_forbidden);
     end if;
   end check_payment_delete_restriction;
+  
+  /*
+  *  Блокировка клиента для изменения
+  *  @param p_payment_id   - идетификатор платежа
+  */
+  procedure try_lock_payment(p_payment_id  payment.payment_id%type)
+  is 
+    v_status payment.status%type;
+  begin
+    select p.status
+      into v_status 
+      from payment p 
+     where p.payment_id = p_payment_id
+    for update nowait;
+    
+    if v_status <> c_status_create then 
+      raise_application_error(common_pack.c_error_code_object_final_status, 
+                              common_pack.c_err_msg_object_final_status);
+    end if;
+    
+    exception
+      when no_data_found then 
+        raise_application_error(common_pack.c_error_code_object_not_found, common_pack.c_err_msg_object_not_found);
+      when common_pack.e_row_locker then 
+        raise_application_error(common_pack.c_error_code_object_already_locked, common_pack.c_err_msg_object_already_locked);
+  end try_lock_payment;
 end payment_api_pack;
 /

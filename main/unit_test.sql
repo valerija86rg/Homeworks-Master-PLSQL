@@ -135,6 +135,39 @@ end;
     and pd.field_id = dpf.field_id
   order by pd.field_id;
   
+  --Проверка "Удаление платежа"
+declare
+  v_payment_id            payment.payment_id%type := 1;
+begin
+  common_pack.enable_manual_changes();
+  
+  delete payment p where p.payment_id = v_payment_id;
+  
+  common_pack.disable_manual_changes();
+  exception
+    when others then 
+      common_pack.disable_manual_changes();
+      raise;
+end;
+/
+
+--Проверка "Обновления платежа"
+declare
+  v_payment_id            payment.payment_id%type := 21;
+begin
+  common_pack.enable_manual_changes();
+  
+  update payment p set p.status = p.status
+  where p.payment_id = v_payment_id;
+  
+  common_pack.disable_manual_changes();
+  exception
+    when others then 
+      common_pack.disable_manual_changes();
+      raise;
+end;
+/
+  
 --негативные Unit тесты
 --Проверка "Создание платежа"
 declare 

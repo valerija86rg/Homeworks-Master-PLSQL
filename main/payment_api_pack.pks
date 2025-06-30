@@ -51,6 +51,13 @@ create or replace package payment_api_pack is
   /*
   *  Проверка на возможность удалять данные
   */
-  procedure check_payment_delete_restriction
+  procedure check_payment_delete_restriction;
   
+  
+  /*
+  *  Блокировка клиента для изменения
+  *  @param p_payment_id   - идетификатор платежа
+  */
+  procedure try_lock_client(p_payment_id      payment.payment_id%type);
 end payment_api_pack;
+/

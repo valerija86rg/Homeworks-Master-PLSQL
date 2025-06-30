@@ -109,3 +109,4 @@ create or replace package body payment_detail_api_pack is
     end if;    
   end is_change_through_api;
 end payment_detail_api_pack;
+/

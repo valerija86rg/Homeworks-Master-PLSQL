@@ -4,6 +4,11 @@ create or replace package payment_api_pack is
 Описание пакета: API для сущности “Платеж”
 */
 
+    --статусы платежа
+  c_status_create         constant payment.status%type := 0;
+  c_status_success        constant payment.status%type := 1;
+  c_status_error          constant payment.status%type := 2;
+  c_status_cancel         constant payment.status%type := 3;
    
   /*
   *  создания платежа
@@ -51,6 +56,7 @@ create or replace package payment_api_pack is
   /*
   *  Проверка на возможность удалять данные
   */
-  procedure check_payment_delete_restriction
+  procedure check_payment_delete_restriction;
   
 end payment_api_pack;
+/

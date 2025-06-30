@@ -51,7 +51,7 @@ create or replace package body payment_api_pack is
                           to_client_id,
                           status,
                           status_change_reason)
-     values (payment_seq.nextval, p_create_dtime, p_summa, p_currency_id, p_from_client_id, p_to_client_id, c_status_create, null)
+     values (payment_seq.nextval, p_create_dtime, p_summa, p_currency_id, p_from_client_id, p_to_client_id, common_pack.c_status_create, null)
      returning payment_id into v_payment_id;
      
      --Добавление данных по платежу
@@ -86,10 +86,10 @@ create or replace package body payment_api_pack is
      
      --Обновление статуса платежа
      update payment p 
-        set p.status = c_status_error
+        set p.status = common_pack.c_status_error
            ,p.status_change_reason = p_reason
       where p.payment_id = p_payment_id
-        and p.status = c_status_create;
+        and p.status = common_pack.c_status_create;
         
     disallow_changes();
   exception
@@ -119,10 +119,10 @@ create or replace package body payment_api_pack is
      
      --Обновление статуса платежа
      update payment p 
-        set p.status = c_status_cancel
+        set p.status = common_pack.c_status_cancel
            ,p.status_change_reason = p_reason
       where p.payment_id = p_payment_id
-        and p.status = c_status_create;
+        and p.status = common_pack.c_status_create;
      disallow_changes();
      
     exception
@@ -147,10 +147,10 @@ create or replace package body payment_api_pack is
      
      --Обновление статуса платежа
      update payment p 
-        set p.status = c_status_success
+        set p.status = common_pack.c_status_success
            ,p.status_change_reason = null
       where p.payment_id = p_payment_id
-        and p.status = c_status_create;
+        and p.status = common_pack.c_status_create;
      
      disallow_changes();     
         

@@ -55,8 +55,8 @@ create or replace package payment_api_pack is
   /*
   *  Проверка на возможность удалять данные
   */
-  procedure check_payment_delete_restriction;
   
+  procedure check_payment_delete_restriction;
   
   /*
   *  Блокировка клиента для изменения

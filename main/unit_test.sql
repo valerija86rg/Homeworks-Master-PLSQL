@@ -154,7 +154,7 @@ begin
                                                   p_payment_detail => v_payment_detail);
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_api_pack.e_invalid_input_parametr then 
+    when common_pack.e_invalid_input_parametr then 
       dbms_output.put_line('Создание платежа. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /
@@ -168,7 +168,7 @@ begin
                                 p_reason => v_reason);
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_api_pack.e_invalid_input_parametr then 
+    when common_pack.e_invalid_input_parametr then 
       dbms_output.put_line('Сброс платежа. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /
@@ -182,7 +182,7 @@ begin
                                   p_reason => v_reason);
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_api_pack.e_invalid_input_parametr then 
+    when common_pack.e_invalid_input_parametr then 
       dbms_output.put_line('Отмена платежа. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /
@@ -194,7 +194,7 @@ begin
   payment_api_pack.successful_finish_payment(p_payment_id => v_payment_id);
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_api_pack.e_invalid_input_parametr then 
+    when common_pack.e_invalid_input_parametr then 
       dbms_output.put_line('Завершение платежа. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /
@@ -208,7 +208,7 @@ begin
                                                           p_payment_id => v_payment_id);
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_detail_api_pack.e_invalid_input_parametr then 
+    when common_pack.e_invalid_input_parametr then 
       dbms_output.put_line('Добавление или обновление данных по платежу. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /
@@ -221,7 +221,7 @@ begin
                                                 p_payment_id => v_payment_id);
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_detail_api_pack.e_invalid_input_parametr then 
+    when common_pack.e_invalid_input_parametr then 
       dbms_output.put_line('Удаление деталей платежа. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /
@@ -235,7 +235,7 @@ begin
   
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_api_pack.e_invalid_delete_forbidden then 
+    when common_pack.e_invalid_delete_forbidden then 
       dbms_output.put_line('Удаление платежа. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /
@@ -264,7 +264,7 @@ begin
   
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_api_pack.e_invalid_manual_changes then 
+    when common_pack.e_invalid_manual_changes then 
       dbms_output.put_line('Вставка в таблицу payment не через API. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /
@@ -281,7 +281,7 @@ begin
   
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_api_pack.e_invalid_manual_changes then 
+    when common_pack.e_invalid_manual_changes then 
       dbms_output.put_line('Обновление таблицы payment не через API. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /
@@ -300,7 +300,7 @@ begin
   
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_detail_api_pack.e_invalid_manual_changes then 
+    when common_pack.e_invalid_manual_changes then 
       dbms_output.put_line('Обновление таблицы payment_detail не через API. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /
@@ -319,7 +319,7 @@ begin
   
   raise_application_error(-20999, 'Unit-тест или API выполнены неверно');
   exception
-    when payment_detail_api_pack.e_invalid_manual_changes then 
+    when common_pack.e_invalid_manual_changes then 
       dbms_output.put_line('Вставка в таблицу payment_detail не через API. Исключение возбуждено успешно. Ошибка: '||sqlerrm);
 end;
 /

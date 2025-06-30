@@ -29,25 +29,21 @@ create or replace package body payment_detail_api_pack is
   is                                                      
   begin
      if p_payment_id is null then
-       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_object_id);
+       raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_object_id);
      end if;
      if p_payment_detail is not empty then 
        for i in p_payment_detail.first..p_payment_detail.last LOOP
        if p_payment_detail(i).field_id is null then
-         raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_field_id);
+         raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_field_id);
        end if;
        
        if p_payment_detail(i).field_value is null then
-         raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_field_value);
+         raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_field_value);
        end if;
-       dbms_output.put_line('Field_id: '||p_payment_detail(i).field_id||'  field_value: '||p_payment_detail(i).field_value);
      end loop;
      else
-       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_collection);
+       raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_collection);
      end if;
-
-     dbms_output.put_line(c_info_msg_update_payment_detail);
-     dbms_output.put_line('ИД Платежа: '||p_payment_id);
      
      allow_changes();
      
@@ -82,14 +78,11 @@ create or replace package body payment_detail_api_pack is
   is
   begin
      if p_payment_id is null then
-       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_object_id);
+       raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_object_id);
      end if;
      if p_delete_field_ids is empty then 
-       raise_application_error(c_error_code_invalid_input_parametr,c_err_msg_empty_collection);
+       raise_application_error(common_pack.c_error_code_invalid_input_parametr,common_pack.c_err_msg_empty_collection);
      end if;
-     dbms_output.put_line(c_info_msg_delete_payment_detail);
-     dbms_output.put_line('ИД Платежа: '||p_payment_id);
-     dbms_output.put_line('Количество удаляемых полей: '||p_delete_field_ids.count);
      
      allow_changes();
      
@@ -111,8 +104,8 @@ create or replace package body payment_detail_api_pack is
   procedure is_change_through_api
   is
   begin
-    if not g_is_api then 
-      raise_application_error(c_error_code_manual_changes, c_err_msg_manual_changes);
+    if not g_is_api and not common_pack.is_manual_changes_allowed() then 
+      raise_application_error(common_pack.c_error_code_manual_changes, common_pack.c_err_msg_manual_changes);
     end if;    
   end is_change_through_api;
 end payment_detail_api_pack;
